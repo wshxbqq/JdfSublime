@@ -1,0 +1,6 @@
+[
+	{ "caption": "-" },
+	{ "caption": "☺JDF-发布该文件夹", "command": "jdf_sublime_upload_folder", "args": {"paths":[]}},
+
+	{ "caption": "-", "id": "end" }
+]
