@@ -1,23 +1,10 @@
-{  
- "schema_version": "2.0",  
- "packages": [  
-  {  
-   "name": "JDF Tool for Sublime text2 ",  
-   "description": "easy upload files by using JDF",  
-   "author": "wang shao xing",  
-   "homepage": "https://github.com/wshxbqq/JdfSublime",  
-   "last_modified": "2014-03-21 23:13:00",  
-   "platforms": {  
-    "windows": [  
-     {  
-      "version": "1.0.0",  
-      "url": "https://github.com/wshxbqq/JdfSublime"  
-     }  
-    ]  
-   }  
-  }  
- ]  
-}  
-
-
-
+{
+      "name": "JDF Tool for Sublime Text 2",
+      "details": "https://github.com/wshxbqq/JdfSublime",
+      "releases": [
+        {
+          "sublime_text": "<3000",
+          "details": "https://github.com/wshxbqq/JdfSublime/tree/master"
+        }
+      ]
+    }
