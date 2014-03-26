@@ -1,0 +1,13 @@
+[
+	{
+        "keys": [
+            "alt+s"
+        ],
+        "command": "jdf_sublime_compressed"
+    },{
+        "keys": [
+            "shift+alt+s"
+        ],
+        "command": "jdf_sublime_debuger"
+    }
+]

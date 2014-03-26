@@ -1,0 +1,14 @@
+ [
+	{ "caption": "-" },
+	{
+		"caption": "JDF-Upload",
+		"children":
+		[
+			{ "caption": "Upload-Compressed", "command": "jdf_sublime_upload_folder_compressed", "args": {"paths": []} },
+			{ "caption": "Upload-Debug", "command": "jdf_sublime_upload_folder_debug", "args": {"paths": []} }
+		]
+	},
+	{ "caption": "-" }
+]
+
+ 
