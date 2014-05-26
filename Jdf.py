@@ -4,6 +4,23 @@ import subprocess
 import thread
 
 class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
+	def initProperties(self,path):
+		self.output=None
+		self.isReady=False
+		self.path=path
+		self.pathCfg= self.getPathContainsCfg(self.path)
+		self.winDisk=self.path.split("\\")[0]
+		if self.pathCfg is False:
+			sublime.message_dialog("This folder or parents are not contains config.json!")
+			self.shortPath=False
+			return False
+			pass
+		else:
+			self.shortPath=self.path.replace(self.pathCfg+"\\","")
+			return True
+
+		
+		pass
 	def panel(self, output, clear=True, **kwargs):
 		if not hasattr(self, 'output_view'):
 			self.output_view = self.window.get_output_panel("git")
@@ -22,14 +39,11 @@ class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 		output_file.end_edit(edit)
 
 
-	def startThread(self,args):
-		winCmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath
-		if args:
-			winCmdStr+=" -debug"
-		proce = subprocess.Popen(winCmdStr,shell=True,stdout=subprocess.PIPE)
+	def startThread(self,cmdStr):
+		print cmdStr
+		proce = subprocess.Popen(cmdStr,shell=True,stdout=subprocess.PIPE)
 		self.output=proce.communicate()[0]
 		self.isReady=True
-		print winCmdStr
 
 	def cb(self):
 		if self.isReady is not True:
@@ -54,23 +68,10 @@ class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 		return exists
 
 class JdfSublimeShortCutBase(JdfSublimeBaseCommand):
-	def initArgs(self,isDebug):
-		self.output=None
-		self.isReady=False
-		self.path=self.window.active_view().file_name()
-		self.pathCfg= self.getPathContainsCfg(self.path)
-		self.winDisk=self.path.split("\\")[0]
-		if self.pathCfg is False:
-			sublime.message_dialog("This folder or parents are not contains config.json!")
-			return
-			pass
-		self.shortPath=self.path.replace(self.pathCfg+"\\","");
-		initStr="Exec Command: jdf upload "+self.shortPath+"";
-		if isDebug:
-			initStr+=" -debug"
-			pass
+	def initArgs(self,cmdStr):
+		initStr="Exec Command: "+cmdStr;
 		self.panel(initStr+"\nPlease Wait....\n----------------------------------------------")
-		thread.start_new_thread(self.startThread,(isDebug,)) 
+		thread.start_new_thread(self.startThread,(cmdStr,)) 
 		sublime.set_timeout(self.cb,100)
 		pass
 
@@ -78,49 +79,85 @@ class JdfSublimeShortCutBase(JdfSublimeBaseCommand):
 
 class JdfSublimeCompressedCommand(JdfSublimeShortCutBase):
 	def run(self):
-		self.initArgs(False)
-		pass
+		if self.initProperties(self.window.active_view().file_name()) is True:
+			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			self.initArgs(cmdStr);
+			pass
+		else:
+			pass
 
 		
 
 class JdfSublimeDebugerCommand(JdfSublimeShortCutBase):
 	def run(self):
-		self.initArgs(True)
-		pass
+		if self.initProperties(self.window.active_view().file_name()) is True:
+			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			self.initArgs(cmdStr);
+			pass
+		else:
+			pass
 
 
 class JdfSublimeUploadFolderBase(JdfSublimeBaseCommand):
-	def initArgs(self,path,isdebug):
-		self.output=None
-		self.isReady=False
-		self.path=path
-		self.pathCfg= self.getPathContainsCfg(self.path)
-		self.winDisk=self.path.split("\\")[0]
-		if self.pathCfg is False:
-			sublime.message_dialog("This folder or parents are not contains config.json!")
-			return
-			pass
-		if self.path == self.pathCfg:
-			self.shortPath=""
-			pass
-		else:
-			self.shortPath=self.path.replace(self.pathCfg+"\\","");
-		initStr="Exec Command: jdf upload "+self.shortPath+"";
-		if isdebug:
-			initStr+=" -debug"
-			pass
+	def initArgs(self,cmdStr):
+		initStr="Exec Command: "+cmdStr;
 		self.panel(initStr+"\nPlease Wait....\n----------------------------------------------")
-		thread.start_new_thread(self.startThread,(isdebug,)) 
+		thread.start_new_thread(self.startThread,(cmdStr,)) 
 		sublime.set_timeout(self.cb,100)
 		pass
 
 
+
+
+
+
+
+
 class JdfSublimeUploadFolderCompressedCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
-		self.path=paths[0]
-		self.initArgs(self.path,False);
+		if self.initProperties(paths[0]) is True:
+			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			self.initArgs(cmdStr);
+			pass
+		else:
+			pass
+
+		
 
 class JdfSublimeUploadFolderDebugCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
+		if self.initProperties(paths[0]) is True:
+			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			self.initArgs(cmdStr);
+			pass
+		else:
+			pass
+
+
+class JdfSublimeOutputFolderCommand(JdfSublimeUploadFolderBase):
+	def run(self, paths):
+		if self.initProperties(paths[0]) is True:
+			if self.pathCfg==self.shortPath:
+				self.shortPath=""
+				pass
+			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf output "+self.shortPath
+			self.initArgs(cmdStr);
+			pass
+		else:
+			pass
+
+class JdfSublimeInstallFolderCommand(JdfSublimeUploadFolderBase):
+	def run(self, paths):
+		self.output=None
+		self.isReady=False
 		self.path=paths[0]
-		self.initArgs(self.path,True);
+		self.pathCfg= self.getPathContainsCfg(self.path)
+
+
+		if self.pathCfg is not False:
+			sublime.message_dialog("Allready has a config.json!")
+			return
+			pass
+		self.winDisk=self.path.split("\\")[0]
+		cmdStr=self.winDisk+" &cd "+self.path+"& jdf install init"
+		self.initArgs(cmdStr);
