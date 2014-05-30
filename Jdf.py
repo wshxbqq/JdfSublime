@@ -3,6 +3,15 @@ import os
 import subprocess
 import thread
 
+
+connector=";"
+if sublime.platform()=="windows":
+	connector="&"
+	pass
+
+
+
+
 class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 	def initProperties(self,path):
 		self.output=None
@@ -10,7 +19,7 @@ class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 		self.path=path
 		self.pathCfg= self.getPathContainsCfg(self.path)
 		if sublime.platform()=="windows":
-			self.winDisk=self.path.split("\\")[0]+" &"
+			self.winDisk=self.path.split("\\")[0]+" "+connector
 		else:
 			self.winDisk=""
 		if self.pathCfg is False:
@@ -83,7 +92,7 @@ class JdfSublimeShortCutBase(JdfSublimeBaseCommand):
 class JdfSublimeCompressedCommand(JdfSublimeShortCutBase):
 	def run(self):
 		if self.initProperties(self.window.active_view().file_name()) is True:
-			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+""+connector+" jdf upload "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -94,7 +103,7 @@ class JdfSublimeCompressedCommand(JdfSublimeShortCutBase):
 class JdfSublimeDebugerCommand(JdfSublimeShortCutBase):
 	def run(self):
 		if self.initProperties(self.window.active_view().file_name()) is True:
-			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			cmdStr=self.winDisk+"cd "+self.pathCfg+""+connector+" jdf upload "+self.shortPath+" -debug"
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -119,7 +128,7 @@ class JdfSublimeUploadFolderBase(JdfSublimeBaseCommand):
 class JdfSublimeUploadFolderCompressedCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
 		if self.initProperties(paths[0]) is True:
-			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+""+connector+" jdf upload "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -130,7 +139,7 @@ class JdfSublimeUploadFolderCompressedCommand(JdfSublimeUploadFolderBase):
 class JdfSublimeUploadFolderDebugCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
 		if self.initProperties(paths[0]) is True:
-			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			cmdStr=self.winDisk+"cd "+self.pathCfg+""+connector+" jdf upload "+self.shortPath+" -debug"
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -143,7 +152,7 @@ class JdfSublimeOutputFolderCommand(JdfSublimeUploadFolderBase):
 			if self.pathCfg==self.shortPath:
 				self.shortPath=""
 				pass
-			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf output "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+""+connector+" jdf output "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -162,10 +171,10 @@ class JdfSublimeInstallFolderCommand(JdfSublimeUploadFolderBase):
 			return
 			pass
 		if sublime.platform()=="windows":
-			self.winDisk=self.path.split("\\")[0]+" &"
+			self.winDisk=self.path.split("\\")[0]+" "+connector+""
 		else:
 			self.winDisk=""
 		
-		cmdStr=self.winDisk+"cd "+self.path+"& jdf install init"
+		cmdStr=self.winDisk+"cd "+self.path+""+connector+" jdf install init"
 		print self.winDisk
 		self.initArgs(cmdStr);
