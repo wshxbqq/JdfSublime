@@ -21,7 +21,7 @@ class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 		if sublime.platform()=="windows":
 			self.winDisk=self.path.split("\\")[0]+" "+connector
 		else:
-			self.winDisk=""
+			self.winDisk="PATH=$PATH:/usr/local/bin/;"
 		if self.pathCfg is False:
 			sublime.message_dialog("This folder or parents are not contains config.json!")
 			self.shortPath=False
@@ -173,8 +173,7 @@ class JdfSublimeInstallFolderCommand(JdfSublimeUploadFolderBase):
 		if sublime.platform()=="windows":
 			self.winDisk=self.path.split("\\")[0]+" "+connector+""
 		else:
-			self.winDisk=""
+			self.winDisk="PATH=$PATH:/usr/local/bin/;"
 		
 		cmdStr=self.winDisk+"cd "+self.path+""+connector+" jdf install init"
-		print self.winDisk
 		self.initArgs(cmdStr);
