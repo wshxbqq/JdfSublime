@@ -9,7 +9,10 @@ class JdfSublimeBaseCommand(sublime_plugin.WindowCommand):
 		self.isReady=False
 		self.path=path
 		self.pathCfg= self.getPathContainsCfg(self.path)
-		self.winDisk=self.path.split("\\")[0]
+		if sublime.platform()=="windows":
+			self.winDisk=self.path.split("\\")[0]+" &"
+		else:
+			self.winDisk=""
 		if self.pathCfg is False:
 			sublime.message_dialog("This folder or parents are not contains config.json!")
 			self.shortPath=False
@@ -80,7 +83,7 @@ class JdfSublimeShortCutBase(JdfSublimeBaseCommand):
 class JdfSublimeCompressedCommand(JdfSublimeShortCutBase):
 	def run(self):
 		if self.initProperties(self.window.active_view().file_name()) is True:
-			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -91,7 +94,7 @@ class JdfSublimeCompressedCommand(JdfSublimeShortCutBase):
 class JdfSublimeDebugerCommand(JdfSublimeShortCutBase):
 	def run(self):
 		if self.initProperties(self.window.active_view().file_name()) is True:
-			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -116,7 +119,7 @@ class JdfSublimeUploadFolderBase(JdfSublimeBaseCommand):
 class JdfSublimeUploadFolderCompressedCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
 		if self.initProperties(paths[0]) is True:
-			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -127,7 +130,7 @@ class JdfSublimeUploadFolderCompressedCommand(JdfSublimeUploadFolderBase):
 class JdfSublimeUploadFolderDebugCommand(JdfSublimeUploadFolderBase):
 	def run(self, paths):
 		if self.initProperties(paths[0]) is True:
-			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
+			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf upload "+self.shortPath+" -debug"
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -140,7 +143,7 @@ class JdfSublimeOutputFolderCommand(JdfSublimeUploadFolderBase):
 			if self.pathCfg==self.shortPath:
 				self.shortPath=""
 				pass
-			cmdStr=self.winDisk+" &cd "+self.pathCfg+"& jdf output "+self.shortPath
+			cmdStr=self.winDisk+"cd "+self.pathCfg+"& jdf output "+self.shortPath
 			self.initArgs(cmdStr);
 			pass
 		else:
@@ -158,6 +161,11 @@ class JdfSublimeInstallFolderCommand(JdfSublimeUploadFolderBase):
 			sublime.message_dialog("Allready has a config.json!")
 			return
 			pass
-		self.winDisk=self.path.split("\\")[0]
-		cmdStr=self.winDisk+" &cd "+self.path+"& jdf install init"
+		if sublime.platform()=="windows":
+			self.winDisk=self.path.split("\\")[0]+" &"
+		else:
+			self.winDisk=""
+		
+		cmdStr=self.winDisk+"cd "+self.path+"& jdf install init"
+		print self.winDisk
 		self.initArgs(cmdStr);
